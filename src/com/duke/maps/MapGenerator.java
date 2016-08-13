@@ -6,13 +6,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class that is responsible for randomly generating maps.
+ * <p>
+ * All methods in this are extendable, but if aren't overriden will use default methods from here.
+ * <p>
+ * If you want to make multiple maps from one instance of MapGenerator, clear the map ({@link DMap#clear()})
+ * <p>
+ * Provides basic (and probably not very efficient) smoothing and randomization tools.
+ * 
+ * @author Duke
+ *
+ */
 public class MapGenerator {
-	DMap map;
+	/**
+	 * Map that is being worked on.
+	 */
+	public DMap map;
 	
+	/**
+	 * Constructs map that is to be worked on using the given size parameters.
+	 * @param width Width of map
+	 * @param height Height of map
+	 * @see DMap#DMap(int, int)
+	 */
 	public MapGenerator(int width, int height) {
 		this.map = new DMap(width, height);
 	}
 	
+	/**
+	 * 
+	 * Builds map using randomness.
+	 * <p>
+	 * Default operations are randomizing tiles within map, then smoothing it out.
+	 * 
+	 * @return finished map
+	 */
 	public DMap build() {
 		List<Tile> tiles = new ArrayList<Tile>(Arrays.asList(Tile.values()));
 		tiles.remove(Tile.BOUNDS);
@@ -21,6 +50,13 @@ public class MapGenerator {
 		return this.map;
 	}
 	
+	/**
+	 * Basic smoothing algorithm.
+	 * <p>
+	 * Goes through all of the tiles in {@link #map}, counts most occurring tile in a square radius of 1, 
+	 * then sets center tile to most common tile.
+	 * @param times
+	 */
 	protected void smooth(int times) {
 		Map<Tile, Integer> index;
 		for(int time = 0; time < times; time++) {
@@ -58,6 +94,12 @@ public class MapGenerator {
 		}
 	}
 	
+	/**
+	 * Randomizes tiles based on given tile {@link java.util.List List}.
+	 * <p>
+	 * Each tile has an equal weight.
+	 * @param tiles tiles that are to be used
+	 */
 	protected void randomizeTiles(List<Tile> tiles) {
 		for(int x = 0; x < map.width; x++) {
 			for(int y = 0; y < map.height; y++) {
@@ -66,6 +108,15 @@ public class MapGenerator {
 		}
 	}
 	
+	/**
+	 * Weighted randomization.
+	 * <p>
+	 * Uses a weighted random number generator to pick tile at current (x,y) coordinates.
+	 * <p>
+	 * For unweighted randomize, use {@link #randomizeTiles(List)}.
+	 * @param tiles weighted tile list.
+	 * 
+	 */
 	protected void randomizeTiles(Map<Tile, Float> tiles) {
 		int maxRoll;
 		int roll;
